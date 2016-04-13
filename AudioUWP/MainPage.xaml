@@ -9,5 +9,20 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+        <StackPanel HorizontalAlignment="Center">
+            <Button Name="btnRecord" Click="btnRecord_Click" >Record</Button>
+
+            <Button Name="btnPlay" Click="btnPlay_Click" >Play</Button>
+
+            <StackPanel Orientation="Horizontal">
+                <Button>Echo</Button>
+                
+                
+            </StackPanel>
+            
+        </StackPanel>
+
+
+
     </Grid>
 </Page>

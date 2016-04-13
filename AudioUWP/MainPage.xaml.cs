@@ -26,5 +26,19 @@ namespace AudioUWP
         {
             this.InitializeComponent();
         }
+
+        private void btnRecord_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnPlay_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+
+
+
     }
 }
