@@ -18,6 +18,9 @@ namespace AudioUWP
 
         public bool IsRecording { get; set; }
 
+        public StorageFile AudioFile { get; private set; }
+
+
         private async Task<bool> Initialize()
         {
             if (_memoryBuffer != null)
@@ -115,6 +118,9 @@ namespace AudioUWP
                 await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                 {
                     StorageFile storageFile = await storageFolder.CreateFileAsync(_audioFilename, CreationCollisionOption.GenerateUniqueName);
+
+                    this.AudioFile = storageFile;
+
                     _fileName = storageFile.Name;
 
                     using (IRandomAccessStream fileStream = await storageFile.OpenAsync(FileAccessMode.ReadWrite))
