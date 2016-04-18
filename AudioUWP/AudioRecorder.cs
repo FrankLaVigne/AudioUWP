@@ -66,6 +66,12 @@ namespace AudioUWP
             });
         }
 
+        public async Task<StorageFile> GetStorageFile(CoreDispatcher dispatcher)
+        {
+            StorageFolder storageFolder = Package.Current.InstalledLocation;
+            StorageFile storageFile = await storageFolder.GetFileAsync(this._fileName);
+            return storageFile;
+        }
 
         public void Play()
         {

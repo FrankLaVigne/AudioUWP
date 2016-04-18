@@ -25,13 +25,13 @@
 
         </StackPanel>
 
-        <!--<TextBlock FontSize="18" Grid.Row="2">Special Effects</TextBlock>
+        <TextBlock FontSize="18" Grid.Row="2">Special Effects</TextBlock>
 
-        <StackPanel Grid.Row="3" >
-            <Button Content="Echo" />
+        <StackPanel Grid.Row="3" Margin="10" >
+            <Button Name="btnEcho" Content="Play with Echo" Click="btnEcho_Click" />
 
 
-        </StackPanel>-->
+        </StackPanel>
 
 
 

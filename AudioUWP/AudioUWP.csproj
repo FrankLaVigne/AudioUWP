@@ -98,7 +98,6 @@
     </Compile>
     <Compile Include="AudioEffects.cs" />
     <Compile Include="AudioRecorder.cs" />
-    <Compile Include="AudioEffects.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
