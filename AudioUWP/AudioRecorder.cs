@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.Media.Capture;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
@@ -11,14 +13,70 @@ namespace AudioUWP
 {
     public class AudioRecorder
     {
-        private const string _audioFilename = "audio_clip.mp3";
+        private const string DEFAULT_AUDIO_FILENAME = "audio_clip.mp3";
         private string _fileName;
         private MediaCapture _mediaCapture;
         private InMemoryRandomAccessStream _memoryBuffer;
 
         public bool IsRecording { get; set; }
 
-        private async Task<bool> Initialize()
+        public async void Record()
+        {
+            if (IsRecording)
+            {
+                throw new InvalidOperationException("Recording already in progress!");
+            }
+
+            await Initialize();
+            await DeleteExistingFile();
+
+            MediaCaptureInitializationSettings settings = new MediaCaptureInitializationSettings
+            {
+                StreamingCaptureMode = StreamingCaptureMode.Audio
+            };
+
+            _mediaCapture = new MediaCapture();
+            await _mediaCapture.InitializeAsync(settings);
+            await _mediaCapture.StartRecordToStreamAsync( MediaEncodingProfile.CreateMp3(AudioEncodingQuality.Auto), _memoryBuffer);
+            IsRecording = true;
+        }
+
+        public async void StopRecording()
+        {
+            await _mediaCapture.StopRecordAsync();
+
+            SaveAudioToFile();
+
+            IsRecording = false;
+        }
+
+        public async Task PlayFromDisk(CoreDispatcher dispatcher)
+        {
+
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                MediaElement playbackMediaElement = new MediaElement();
+                StorageFolder storageFolder = Package.Current.InstalledLocation;
+                StorageFile storageFile = await storageFolder.GetFileAsync(this._fileName);
+                IRandomAccessStream stream = await storageFile.OpenAsync(FileAccessMode.Read);
+
+                playbackMediaElement.SetSource(stream, storageFile.FileType);
+                playbackMediaElement.Play();
+
+            });
+        }
+
+
+        public void Play()
+        {
+            MediaElement playbackMediaElement = new MediaElement();
+
+            playbackMediaElement.SetSource(_memoryBuffer, "MP3");
+            playbackMediaElement.Play();
+        }
+
+
+        private async Task Initialize()
         {
             if (_memoryBuffer != null)
             {
@@ -32,112 +90,49 @@ namespace AudioUWP
                 _mediaCapture.Dispose();
             }
 
+            this._fileName = DEFAULT_AUDIO_FILENAME;
+
+        }
+
+
+        private async void SaveAudioToFile()
+        {
             try
             {
-                MediaCaptureInitializationSettings settings = new MediaCaptureInitializationSettings
-                {
-                    StreamingCaptureMode = StreamingCaptureMode.Audio
-                };
-
-                _mediaCapture = new MediaCapture();
-                await _mediaCapture.InitializeAsync(settings);
-
-                //_mediaCapture.RecordLimitationExceeded += (MediaCapture sender) =>
-                //{
-                //    StopRecording();
-                //    throw new Exception("Exceeded Record Limitation");
-                //};
-                //_mediaCapture.Failed += (MediaCapture sender, MediaCaptureFailedEventArgs errorEventArgs) =>
-                //{
-                //    IsRecording = false;
-                //    throw new Exception(string.Format("Code: {0}. {1}", errorEventArgs.Code, errorEventArgs.Message));
-                //};
-            }
-            catch (Exception ex)
-            {
-                //if (ex.InnerException != null && ex.InnerException.GetType() == typeof(UnauthorizedAccessException))
-                //{
-                //    throw ex.InnerException;
-                //}
-                throw ex;
-            }
-            return true;
-        }
-
-
-        public async void Record()
-        {
-            if (IsRecording)
-            {
-                throw new InvalidOperationException("Recording already in progress!");
-            }
-
-            await Initialize();
-
-            await _mediaCapture.StartRecordToStreamAsync(MediaEncodingProfile.CreateMp3(AudioEncodingQuality.Auto), _memoryBuffer);
-            IsRecording = true;
-        }
-
-        public async void StopRecording()
-        {
-            await _mediaCapture.StopRecordAsync();
-            IsRecording = false;
-        }
-
-        public async Task Play(CoreDispatcher dispatcher)
-        {
-
-            try
-            {
-                MediaElement playbackMediaElement = new MediaElement();
-
-                if (this._memoryBuffer == null)
-                {
-                    throw new ArgumentNullException("Memory Buffer is null.");
-                }
-
                 IRandomAccessStream audioStream = _memoryBuffer.CloneStream();
+                StorageFolder storageFolder = Package.Current.InstalledLocation;
 
-                if (audioStream == null)
+                StorageFile storageFile = await storageFolder.CreateFileAsync(DEFAULT_AUDIO_FILENAME, CreationCollisionOption.GenerateUniqueName);
+                this._fileName = storageFile.Name;
+
+                using (IRandomAccessStream fileStream = await storageFile.OpenAsync(FileAccessMode.ReadWrite))
                 {
-                    throw new ArgumentNullException("Audio Stream is null.");
+                    await RandomAccessStream.CopyAndCloseAsync(audioStream.GetInputStreamAt(0), fileStream.GetOutputStreamAt(0));
+                    await audioStream.FlushAsync();
+                    audioStream.Dispose();
                 }
-
-                StorageFolder storageFolder = Windows.ApplicationModel.Package.Current.InstalledLocation;
-
-                if (!string.IsNullOrEmpty(_fileName))
-                {
-                    StorageFile original = await storageFolder.GetFileAsync(_fileName);
-                    await original.DeleteAsync();
-                }
-
-
-                await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-                {
-                    StorageFile storageFile = await storageFolder.CreateFileAsync(_audioFilename, CreationCollisionOption.GenerateUniqueName);
-                    _fileName = storageFile.Name;
-
-                    using (IRandomAccessStream fileStream = await storageFile.OpenAsync(FileAccessMode.ReadWrite))
-                    {
-                        await RandomAccessStream.CopyAndCloseAsync(audioStream.GetInputStreamAt(0), fileStream.GetOutputStreamAt(0));
-                        await audioStream.FlushAsync();
-                        audioStream.Dispose();
-                    }
-
-                    // Open file
-                    IRandomAccessStream stream = await storageFile.OpenAsync(FileAccessMode.Read);
-
-                    playbackMediaElement.SetSource(stream, storageFile.FileType);
-                    playbackMediaElement.Play();
-                });
-
             }
             catch (Exception ex)
             {
+                throw;
+            }
+        }
 
-                throw ex;
+
+        private async Task DeleteExistingFile()
+        {
+            try
+            {
+                StorageFolder storageFolder = Windows.ApplicationModel.Package.Current.InstalledLocation;
+                StorageFile existingFile = await storageFolder.GetFileAsync(this._fileName);
+                await existingFile.DeleteAsync();
+            }
+            catch (FileNotFoundException)
+            {
+
             }
 
         }
+
     }
 }

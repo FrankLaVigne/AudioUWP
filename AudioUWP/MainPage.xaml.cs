@@ -22,18 +22,41 @@ namespace AudioUWP
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        AudioRecorder _audioRecorder;
+
+
         public MainPage()
         {
             this.InitializeComponent();
+
+            this._audioRecorder = new AudioRecorder();
+
         }
 
         private void btnRecord_Click(object sender, RoutedEventArgs e)
         {
 
+            if (this._audioRecorder.IsRecording)
+            {
+                this.btnRecord.Content = "Record";
+                this._audioRecorder.StopRecording();
+            }
+            else
+            {
+                this.btnRecord.Content = "Stop";
+                this._audioRecorder.Record();
+            }
+
+
+
         }
 
-        private void btnPlay_Click(object sender, RoutedEventArgs e)
+        private async void btnPlay_Click(object sender, RoutedEventArgs e)
         {
+            //this._audioRecorder.Play();
+
+            await this._audioRecorder.PlayFromDisk(Dispatcher);
+
 
         }
 

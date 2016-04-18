@@ -8,19 +8,30 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="43*"/>
+            <RowDefinition Height="133*"/>
+            <RowDefinition Height="48*"/>
+            <RowDefinition Height="416*"/>
+        </Grid.RowDefinitions>
 
-        <StackPanel HorizontalAlignment="Center">
-            <Button Name="btnRecord" Click="btnRecord_Click" >Record</Button>
 
-            <Button Name="btnPlay" Click="btnPlay_Click" >Play</Button>
+        <TextBlock FontSize="24">Audio in UWP</TextBlock>
 
-            <StackPanel Orientation="Horizontal">
-                <Button>Echo</Button>
-                
-                
-            </StackPanel>
-            
+        <StackPanel HorizontalAlignment="Center" Grid.Row="1" Margin="142,0"  >
+            <Button Name="btnRecord" Click="btnRecord_Click" Margin="5" >Record</Button>
+
+            <Button Name="btnPlay" Click="btnPlay_Click" HorizontalAlignment="Center" Margin="5">Play</Button>
+
         </StackPanel>
+
+        <!--<TextBlock FontSize="18" Grid.Row="2">Special Effects</TextBlock>
+
+        <StackPanel Grid.Row="3" >
+            <Button Content="Echo" />
+
+
+        </StackPanel>-->
 
 
 
