@@ -17,8 +17,7 @@ namespace AudioUWP
     {
         private const string DEFAULT_AUDIO_FILENAME = "audio_clip.mp3";
 
-
-        public AudioGraph Graph { get; set; }
+        private AudioGraph _audioGraph;
 
         private AudioFileInputNode _fileInputNode;
         private AudioDeviceOutputNode _deviceOutputNode;
@@ -29,17 +28,12 @@ namespace AudioUWP
 
         private EchoEffectDefinition _echoEffectDefinition;
 
-
-
         public async Task InitializeAudioGraph()
         {
-
-
-
             AudioGraphSettings settings = new AudioGraphSettings(AudioRenderCategory.Media);
             CreateAudioGraphResult result = await AudioGraph.CreateAsync(settings);
-            this.Graph = result.Graph;
-            CreateAudioDeviceOutputNodeResult outputDeviceNodeResult = await this.Graph.CreateDeviceOutputNodeAsync();
+            this._audioGraph = result.Graph;
+            CreateAudioDeviceOutputNodeResult outputDeviceNodeResult = await this._audioGraph.CreateDeviceOutputNodeAsync();
 
             _deviceOutputNode = outputDeviceNodeResult.DeviceOutputNode;
 
@@ -47,17 +41,14 @@ namespace AudioUWP
 
         public void Play()
         {
-
-            this.Graph.Start();
+            this._audioGraph.Start();
         }
-
-
 
         public async Task LoadFileIntoGraph(StorageFile audioFile)
         {
             this.AudioFile = audioFile;
 
-            CreateAudioFileInputNodeResult audioFileInputResult = await this.Graph.CreateFileInputNodeAsync(this.AudioFile);
+            CreateAudioFileInputNodeResult audioFileInputResult = await this._audioGraph.CreateFileInputNodeAsync(this.AudioFile);
 
             if (audioFileInputResult.Status != AudioFileNodeCreationStatus.Success)
             {
@@ -74,7 +65,7 @@ namespace AudioUWP
 
         private void CreateEchoEffect()
         {
-            _echoEffectDefinition = new EchoEffectDefinition(this.Graph);
+            _echoEffectDefinition = new EchoEffectDefinition(this._audioGraph);
 
             _echoEffectDefinition.WetDryMix = 0.7f;
             _echoEffectDefinition.Feedback = 0.5f;
