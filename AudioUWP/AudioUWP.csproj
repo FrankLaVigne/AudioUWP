@@ -96,6 +96,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AudioEffects.cs" />
     <Compile Include="AudioRecorder.cs" />
     <Compile Include="AudioEffects.cs" />
     <Compile Include="MainPage.xaml.cs">
