@@ -54,18 +54,13 @@ namespace AudioUWP
 
         }
 
-        private async void btnSpecialEffectsPlay_Click(object sender, RoutedEventArgs e)
+        private async void btnSpecialEffectPlay_Click(object sender, RoutedEventArgs e)
         {
-
             var storageFile = await this._audioRecorder.GetStorageFile(Dispatcher);
-
             AudioEffects effects = new AudioEffects();
             await effects.InitializeAudioGraph();
-
             await effects.LoadFileIntoGraph(storageFile);
-
             effects.Play();
-
         }
     }
 }

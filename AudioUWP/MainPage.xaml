@@ -28,11 +28,7 @@
         <TextBlock FontSize="18" Grid.Row="2">Special Effects</TextBlock>
 
         <StackPanel Grid.Row="3" Margin="10" >
-
-            <CheckBox Name="cbxEcho" Content="Echo" />
-            <CheckBox Name="cbxReverb" Content="Reverb" />
-
-            <Button Name="btnEcho" Content="Play with Special Effects" Click="btnSpecialEffectsPlay_Click" />
+            <Button Name="btnSpecialEffectPlay" Content="Play with Special Effects" Click="btnSpecialEffectPlay_Click" />
 
 
         </StackPanel>

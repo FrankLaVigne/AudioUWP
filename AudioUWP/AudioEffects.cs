@@ -32,8 +32,7 @@ namespace AudioUWP
 
         public async Task LoadFileIntoGraph(StorageFile audioFile)
         {
-            this.AudioFile = audioFile;
-            CreateAudioFileInputNodeResult audioFileInputResult = await this._audioGraph.CreateFileInputNodeAsync(this.AudioFile);
+            CreateAudioFileInputNodeResult audioFileInputResult = await this._audioGraph.CreateFileInputNodeAsync(audioFile);
 
             if (audioFileInputResult.Status != AudioFileNodeCreationStatus.Success)
             {
@@ -43,19 +42,19 @@ namespace AudioUWP
             _fileInputNode = audioFileInputResult.FileInputNode;
             _fileInputNode.AddOutgoingConnection(_deviceOutputNode);
 
-            CreateEchoEffect();
+            CreateAndAddEchoEffect();
         }
 
 
-        private void CreateEchoEffect()
+        private void CreateAndAddEchoEffect()
         {
-            _echoEffectDefinition = new EchoEffectDefinition(this._audioGraph);
+            EchoEffectDefinition echoEffectDefinition = new EchoEffectDefinition(this._audioGraph);
 
-            _echoEffectDefinition.WetDryMix = 0.7f;
-            _echoEffectDefinition.Feedback = 0.5f;
-            _echoEffectDefinition.Delay = 100.0f;
+            echoEffectDefinition.WetDryMix = 0.7f;
+            echoEffectDefinition.Feedback = 0.5f;
+            echoEffectDefinition.Delay = 100.0f;
 
-            _fileInputNode.EffectDefinitions.Add(_echoEffectDefinition);
+            _fileInputNode.EffectDefinitions.Add(echoEffectDefinition);
         }
 
     }
