@@ -27,7 +27,7 @@ namespace AudioUWP
                 throw new InvalidOperationException("Recording already in progress!");
             }
 
-            await Initialize();
+            Initialize();
             await DeleteExistingFile();
 
             MediaCaptureInitializationSettings settings = new MediaCaptureInitializationSettings
@@ -82,7 +82,7 @@ namespace AudioUWP
         }
 
 
-        private async Task Initialize()
+        private void Initialize()
         {
             if (_memoryBuffer != null)
             {
