@@ -9,10 +9,10 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="43*"/>
-            <RowDefinition Height="133*"/>
-            <RowDefinition Height="48*"/>
-            <RowDefinition Height="416*"/>
+            <RowDefinition Height="43"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="33"/>
+            <RowDefinition Height="416"/>
         </Grid.RowDefinitions>
 
 
@@ -28,7 +28,11 @@
         <TextBlock FontSize="18" Grid.Row="2">Special Effects</TextBlock>
 
         <StackPanel Grid.Row="3" Margin="10" >
-            <Button Name="btnEcho" Content="Play with Echo" Click="btnEcho_Click" />
+
+            <CheckBox Name="cbxEcho" Content="Echo" />
+            <CheckBox Name="cbxReverb" Content="Reverb" />
+
+            <Button Name="btnEcho" Content="Play with Special Effects" Click="btnSpecialEffectsPlay_Click" />
 
 
         </StackPanel>

@@ -28,14 +28,11 @@ namespace AudioUWP
         public MainPage()
         {
             this.InitializeComponent();
-
             this._audioRecorder = new AudioRecorder();
-
         }
 
         private void btnRecord_Click(object sender, RoutedEventArgs e)
         {
-
             if (this._audioRecorder.IsRecording)
             {
                 this.btnRecord.Content = "Record";
@@ -46,21 +43,18 @@ namespace AudioUWP
                 this.btnRecord.Content = "Stop";
                 this._audioRecorder.Record();
             }
-
-
-
         }
 
         private async void btnPlay_Click(object sender, RoutedEventArgs e)
         {
-            //this._audioRecorder.Play();
+            this._audioRecorder.Play();
 
             await this._audioRecorder.PlayFromDisk(Dispatcher);
 
 
         }
 
-        private async void btnEcho_Click(object sender, RoutedEventArgs e)
+        private async void btnSpecialEffectsPlay_Click(object sender, RoutedEventArgs e)
         {
 
             var storageFile = await this._audioRecorder.GetStorageFile(Dispatcher);

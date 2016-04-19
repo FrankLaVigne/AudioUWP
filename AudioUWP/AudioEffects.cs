@@ -1,28 +1,16 @@
 ﻿using System;
-using System.IO;
 using System.Threading.Tasks;
-using Windows.ApplicationModel;
 using Windows.Media.Audio;
-using Windows.Media.Capture;
-using Windows.Media.MediaProperties;
 using Windows.Media.Render;
 using Windows.Storage;
-using Windows.Storage.Streams;
-using Windows.UI.Core;
-using Windows.UI.Xaml.Controls;
 
 namespace AudioUWP
 {
     public class AudioEffects
     {
-        private const string DEFAULT_AUDIO_FILENAME = "audio_clip.mp3";
-
         private AudioGraph _audioGraph;
-
         private AudioFileInputNode _fileInputNode;
         private AudioDeviceOutputNode _deviceOutputNode;
-
-        public bool IsPlaying { get; set; }
 
         public StorageFile AudioFile { get; private set; }
 
@@ -34,9 +22,7 @@ namespace AudioUWP
             CreateAudioGraphResult result = await AudioGraph.CreateAsync(settings);
             this._audioGraph = result.Graph;
             CreateAudioDeviceOutputNodeResult outputDeviceNodeResult = await this._audioGraph.CreateDeviceOutputNodeAsync();
-
             _deviceOutputNode = outputDeviceNodeResult.DeviceOutputNode;
-
         }
 
         public void Play()
@@ -47,7 +33,6 @@ namespace AudioUWP
         public async Task LoadFileIntoGraph(StorageFile audioFile)
         {
             this.AudioFile = audioFile;
-
             CreateAudioFileInputNodeResult audioFileInputResult = await this._audioGraph.CreateFileInputNodeAsync(this.AudioFile);
 
             if (audioFileInputResult.Status != AudioFileNodeCreationStatus.Success)
@@ -59,7 +44,6 @@ namespace AudioUWP
             _fileInputNode.AddOutgoingConnection(_deviceOutputNode);
 
             CreateEchoEffect();
-
         }
 
 
